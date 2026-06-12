@@ -15,6 +15,9 @@ class RssChannel:
     def notify_new(self, games: list[Giveaway]) -> None:
         pass  # pull-only
 
+    def notify_digest(self, games: list[Giveaway], header: str) -> None:
+        pass  # pull-only
+
     def write_full(self, games: list[Giveaway]) -> None:
         rss = ET.Element("rss", version="2.0")
         channel = ET.SubElement(rss, "channel")

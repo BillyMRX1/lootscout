@@ -13,8 +13,11 @@ channels you enable (Telegram, email) while always writing a full RSS feed.
 4. Saves `seen.json` **only after** a successful run — a failed push leaves
    state untouched so nothing is silently dropped.
 
-The very first run seeds `seen.json` silently (no notification spam for the
-existing backlog) and writes the feed.
+The very first run sends **one consolidated digest** of everything currently
+free-to-keep (a single message with a clickable link per game, not one ping per
+giveaway), then records them as seen. After that, you're only notified about
+giveaways that appear later. If no push channels are enabled, the first run just
+seeds silently and writes the feed.
 
 ## Setup
 

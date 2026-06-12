@@ -31,5 +31,6 @@ class Giveaway:
 @runtime_checkable
 class Channel(Protocol):
     name: str
-    def notify_new(self, games: list[Giveaway]) -> None: ...   # push: on NEW games
-    def write_full(self, games: list[Giveaway]) -> None: ...   # pull: ALL current
+    def notify_new(self, games: list[Giveaway]) -> None: ...           # push: on NEW games
+    def notify_digest(self, games: list[Giveaway], header: str) -> None: ...  # push: one consolidated msg (first run)
+    def write_full(self, games: list[Giveaway]) -> None: ...           # pull: ALL current

@@ -21,8 +21,28 @@ def run_pipeline(current: list[Giveaway], channels: list[Channel], seen_path: Pa
 
     first_run = not Path(seen_path).exists()
     if first_run:
-        state.save_seen(seen_path, current_ids)
-        log.info("First run: seeded %d giveaways silently (no push).", len(current_ids))
+        push = [ch for ch in channels if ch.name in PUSH_CHANNELS]
+        if not push:
+            state.save_seen(seen_path, current_ids)
+            log.info("First run: seeded %d giveaways silently (no push channels).",
+                     len(current_ids))
+            return
+        # Send ONE consolidated digest of everything currently live, so the user
+        # sees the backlog without a flood — then seed only if it was delivered.
+        header = f"🔭 LootScout is live — {len(current)} games currently free to keep:"
+        all_ok = True
+        for ch in push:
+            try:
+                ch.notify_digest(current, header)
+                log.info("First run: sent digest of %d giveaway(s) via %s.",
+                         len(current), ch.name)
+            except Exception:
+                all_ok = False
+                log.exception("First-run digest via '%s' failed.", ch.name)
+        if all_ok:
+            state.save_seen(seen_path, current_ids)
+        else:
+            log.warning("First-run digest failed; leaving seen.json unset to retry.")
         return
 
     seen = state.load_seen(seen_path)
