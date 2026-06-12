@@ -1,0 +1,10 @@
+[
+  {"id": 3684, "title": "Eets (Steam) Giveaway", "worth": "$9.99",
+   "image": "https://x/img1.jpg", "description": "Claim Eets free.",
+   "open_giveaway_url": "https://x/open/eets", "end_date": "2026-06-15 23:59:00",
+   "platforms": "PC, Steam", "status": "Active", "type": "Game"},
+  {"id": 3690, "title": "Some DRM-Free Game", "worth": "N/A",
+   "image": "https://x/img2.jpg", "description": "Permanent freebie.",
+   "open_giveaway_url": "https://x/open/drm", "end_date": "N/A",
+   "platforms": "PC, DRM-Free", "status": "Active", "type": "Game"}
+]
