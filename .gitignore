@@ -11,6 +11,9 @@ seen.json
 # RSS output (regenerated every run)
 public/feed.xml
 
+# Log
+lootscout.log
+
 # Python
 __pycache__/
 *.py[cod]
