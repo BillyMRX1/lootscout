@@ -52,6 +52,41 @@ PLATFORM_CHOICES = {
 }
 
 
+def sample_giveaway():
+    """A synthetic giveaway used for setup-time test notifications."""
+    from .channels.base import Giveaway
+    return Giveaway(
+        id=0,
+        title="Test Notification 🎮",
+        worth="$0.00",
+        image="",
+        description="If you can see this, your channel is configured correctly.",
+        url="https://www.gamerpower.com",
+        end_date="N/A",
+        platforms="PC",
+    )
+
+
+def send_tests(channels) -> list[tuple[str, bool, str]]:
+    """Send a sample notification through each channel; never raises.
+
+    Returns a list of (channel_name, ok, error_message) tuples.
+    """
+    from .channels import PULL_CHANNELS
+    sample = sample_giveaway()
+    results: list[tuple[str, bool, str]] = []
+    for ch in channels:
+        try:
+            if ch.name in PULL_CHANNELS:
+                ch.write_full([sample])
+            else:
+                ch.notify_new([sample])
+            results.append((ch.name, True, ""))
+        except Exception as exc:  # report, don't abort the wizard
+            results.append((ch.name, False, str(exc)))
+    return results
+
+
 def run_setup(config_path, env_path) -> None:
     print("Free Game Checker — Setup\n")
 
@@ -99,7 +134,10 @@ def run_setup(config_path, env_path) -> None:
     if "email" in channels:
         print("\nUse a dedicated Gmail + 16-char App Password (not your real password):")
         env["GMAIL_USER"] = questionary.text("Gmail address?").ask()
-        env["GMAIL_APP_PASSWORD"] = questionary.password("Gmail app password?").ask()
+        # Gmail shows app passwords as 4 space-separated groups, but login wants
+        # them with the spaces removed.
+        app_pw = questionary.password("Gmail app password?").ask()
+        env["GMAIL_APP_PASSWORD"] = (app_pw or "").replace(" ", "")
         env["RECIPIENT_EMAIL"] = questionary.text("Send notifications to?").ask()
 
     if "rss" in channels:
@@ -111,6 +149,16 @@ def run_setup(config_path, env_path) -> None:
     write_env(env_path, env)
     print(f"\n✔ Wrote {config_path}")
     print(f"✔ Wrote {env_path} (chmod 600)")
+
+    if channels and questionary.confirm(
+        "Send a test notification to each channel now?", default=True
+    ).ask():
+        from . import config as config_mod
+        from .channels import build_channels
+        cfg_obj = config_mod.load(config_path, env=env)
+        for name, ok, err in send_tests(build_channels(cfg_obj)):
+            print(f"  {'✔' if ok else '✗'} {name}" + (f" — {err}" if err else ""))
+
     print("\nTest run: uv run free-checker")
     print("Cron (every 6h):")
     print("  0 */6 * * * cd $(pwd) && uv run free-checker >> checker.log 2>&1")
