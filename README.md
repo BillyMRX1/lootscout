@@ -33,13 +33,26 @@ uv run lootscout setup
 
 ## Running
 
+LootScout is a **run-once command, not a background service**. Each run checks
+for new giveaways and exits — it only notifies you of giveaways that appear
+*while it runs*.
+
 Check for new giveaways (this is the default command — `run` is optional):
 
 ```bash
 uv run lootscout
 ```
 
-### Scheduling with cron
+> **You need an always-on machine for real-time notifications.** To be alerted
+> automatically you must run LootScout on a **server, VPS, or PC that stays on**
+> (via cron/launchd, below). If the machine is off or asleep when a giveaway
+> goes live, that run doesn't happen and you can miss it.
+>
+> **No server? Run it manually.** LootScout works perfectly as a manual command —
+> just run `uv run lootscout` yourself whenever you want to check (e.g. once a
+> day). You'll get a Telegram/email ping for anything new since your last run.
+
+### Scheduling with cron (server / always-on PC)
 
 Poll every 6 hours:
 
@@ -49,6 +62,9 @@ Poll every 6 hours:
 
 Use absolute paths for both the project directory and `uv`; cron runs with a
 minimal environment.
+
+On a **macOS laptop**, prefer `launchd` over cron — it runs a missed job when
+the machine wakes, whereas cron simply skips jobs that fall during sleep.
 
 ### Serving the RSS feed
 
