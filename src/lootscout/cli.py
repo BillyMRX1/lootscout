@@ -6,6 +6,7 @@ from pathlib import Path
 CONFIG_PATH = Path("config.toml")
 ENV_PATH = Path(".env")
 SEEN_PATH = Path("seen.json")
+FEED_PATH = Path("public/feed.xml")
 
 
 def _load_env_file(path: Path) -> None:
@@ -47,5 +48,19 @@ def main(argv: list[str] | None = None) -> int:
             return 1
         return 0
 
-    print(f"Unknown command: {cmd}\nUsage: lootscout [setup|run]", file=sys.stderr)
+    if cmd == "status":
+        import os
+        from . import status
+        _load_env_file(ENV_PATH)
+        return status.run_status(CONFIG_PATH, ENV_PATH, SEEN_PATH, FEED_PATH,
+                                 env=dict(os.environ))
+
+    if cmd in ("remove", "uninstall"):
+        from . import remove
+        return remove.run_remove(
+            config_path=CONFIG_PATH, env_path=ENV_PATH, seen_path=SEEN_PATH,
+            feed_path=FEED_PATH, install_dir=Path.cwd())
+
+    print(f"Unknown command: {cmd}\nUsage: lootscout [setup|run|status|remove]",
+          file=sys.stderr)
     return 2

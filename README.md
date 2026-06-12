@@ -43,6 +43,28 @@ Check for new giveaways (this is the default command — `run` is optional):
 uv run lootscout
 ```
 
+### Other commands
+
+Check your configuration and health at a glance — platforms, enabled channels,
+whether each required secret is present (masked, never printed), how many
+giveaways are tracked, and the feed status:
+
+```bash
+uv run lootscout status
+```
+
+`status` exits `0` when healthy, `1` when there's no config yet, and `2` when a
+secret is missing for an enabled channel — so it doubles as a cron health check.
+
+Tear an install down interactively — pick any of: runtime files
+(`config.toml`/`.env`/`seen.json`/`public/feed.xml`), the scheduled cron/launchd
+job, or the whole install dir. It previews what will be deleted and asks you to
+type a confirmation first:
+
+```bash
+uv run lootscout remove
+```
+
 > **You need an always-on machine for real-time notifications.** To be alerted
 > automatically you must run LootScout on a **server, VPS, or PC that stays on**
 > (via cron/launchd, below). If the machine is off or asleep when a giveaway

@@ -8,6 +8,15 @@ from .rss import RssChannel
 PUSH_CHANNELS = {"email", "telegram"}
 PULL_CHANNELS = {"rss"}
 
+# Single source of truth for which .env secrets each channel needs. Kept in sync
+# with the require_secret(...) calls in build_channels below (guarded by a test).
+# Telegram's chat_id lives in config.toml, not .env, so it is not listed here.
+REQUIRED_SECRETS = {
+    "telegram": ["TELEGRAM_BOT_TOKEN"],
+    "email": ["GMAIL_USER", "GMAIL_APP_PASSWORD", "RECIPIENT_EMAIL"],
+    "rss": [],
+}
+
 
 def build_channels(cfg) -> list[Channel]:
     """Instantiate enabled channels from a Config; fails fast on missing secrets."""
