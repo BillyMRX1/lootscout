@@ -16,15 +16,16 @@ _q_common.INDICATOR_SELECTED = "■"
 _q_common.INDICATOR_UNSELECTED = "□"
 POINTER = "◆"
 
-# Default questionary leaves "selected"/"highlighted" empty, which renders
-# checked rows as a harsh reverse-video block in many terminals. Give checked
-# items clean green text + ■, a green pointer, and a soft cursor highlight.
+# Default questionary renders checked rows as a reverse-video highlight block
+# behind the label in many terminals. Turn that off so the label stays plain
+# text — the ■ / □ square is the only checked/unchecked indicator. Only the ◆
+# pointer is tinted, to show cursor position.
 WIZARD_STYLE = questionary.Style([
     ("qmark", "fg:#5fd700 bold"),
     ("question", "bold"),
     ("pointer", "fg:#5fd700 bold"),
-    ("selected", "fg:#5fd700"),          # checked item (□/■ + label)
-    ("highlighted", "fg:#5fafff bold"),  # row under the cursor
+    ("selected", "noreverse"),     # checked label: plain text, no highlight block
+    ("highlighted", "noreverse"),  # cursor row: plain text, no highlight block
 ])
 
 
