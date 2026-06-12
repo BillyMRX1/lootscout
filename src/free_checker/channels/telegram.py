@@ -1,4 +1,5 @@
 from __future__ import annotations
+import html
 import requests
 from .base import Giveaway
 
@@ -15,8 +16,11 @@ class TelegramChannel:
 
     def notify_new(self, games: list[Giveaway]) -> None:
         for game in games:
-            text = (f"🎮 <b>{game.title}</b> — {game.worth}\n"
-                    f"{game.platforms}\n{game.url}")
+            title = html.escape(game.title)
+            worth = html.escape(game.worth)
+            platforms = html.escape(game.platforms)
+            text = (f"🎮 <b>{title}</b> — {worth}\n"
+                    f"{platforms}\n{game.url}")
             resp = requests.post(
                 self._api("sendMessage"),
                 json={"chat_id": self.chat_id, "text": text,
