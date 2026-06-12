@@ -28,6 +28,14 @@ def test_random_topic_is_obscure():
     assert t.startswith("free-games-")
     assert len(t) > len("free-games-") + 6
 
+def test_checkbox_glyphs_are_square_boxes():
+    # Importing the wizard overrides questionary's round ● / ○ with squares.
+    from lootscout import wizard  # noqa: F401
+    import questionary.prompts.common as qcommon
+    assert qcommon.INDICATOR_SELECTED == "■"
+    assert qcommon.INDICATOR_UNSELECTED == "□"
+    assert wizard.POINTER == "◆"
+
 def test_sample_giveaway_is_a_giveaway():
     from lootscout.channels.base import Giveaway
     s = wizard.sample_giveaway()

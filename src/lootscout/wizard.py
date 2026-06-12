@@ -6,7 +6,15 @@ from pathlib import Path
 import tomli_w
 import requests
 import questionary
+import questionary.prompts.common as _q_common
 import qrcode
+
+# questionary hardcodes round ● / ○ checkbox glyphs as module globals (no
+# per-call override exists in 2.x). Reassign them to square boxes for a cleaner
+# toggle, and use a diamond cursor.
+_q_common.INDICATOR_SELECTED = "■"
+_q_common.INDICATOR_UNSELECTED = "□"
+POINTER = "◆"
 
 
 def random_topic() -> str:
@@ -93,6 +101,7 @@ def run_setup(config_path, env_path) -> None:
     chosen = questionary.checkbox(
         "Which platforms to watch?",
         choices=[questionary.Choice(label, checked=True) for label in PLATFORM_CHOICES],
+        pointer=POINTER,
     ).ask()
     platforms = [slug for label in chosen for slug in PLATFORM_CHOICES[label]]
 
@@ -105,6 +114,7 @@ def run_setup(config_path, env_path) -> None:
             questionary.Choice("Email — Gmail", value="email"),
             questionary.Choice("RSS — for feed readers", value="rss", checked=True),
         ],
+        pointer=POINTER,
     ).ask()
 
     cfg = {"platforms": platforms, "type": "game", "enabled": channels}
