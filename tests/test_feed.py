@@ -1,8 +1,8 @@
 import json
 from pathlib import Path
 from unittest.mock import patch, MagicMock
-from free_checker import feed
-from free_checker.channels.base import Giveaway
+from lootscout import feed
+from lootscout.channels.base import Giveaway
 
 SAMPLE = json.loads((Path(__file__).parent / "sample_feed.json").read_text())
 
@@ -21,7 +21,7 @@ def test_build_url_includes_all_platforms_and_type():
     assert "platform=pc.xbox-one.switch" in url
     assert "type=game" in url
 
-@patch("free_checker.feed.requests.get")
+@patch("lootscout.feed.requests.get")
 def test_fetch_calls_api_and_parses(mock_get):
     resp = MagicMock(); resp.json.return_value = SAMPLE; resp.raise_for_status = MagicMock()
     mock_get.return_value = resp

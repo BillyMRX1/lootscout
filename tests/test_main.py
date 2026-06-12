@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock
-from free_checker import main
-from free_checker.channels.base import Giveaway
+from lootscout import main
+from lootscout.channels.base import Giveaway
 
 def g(i): return Giveaway(i, f"G{i}", "$9", "", "d", "u", "N/A", "PC")
 

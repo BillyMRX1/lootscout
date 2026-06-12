@@ -1,5 +1,5 @@
 from pathlib import Path
-from free_checker import state
+from lootscout import state
 
 def test_load_missing_file_returns_empty_set(tmp_path):
     assert state.load_seen(tmp_path / "seen.json") == set()

@@ -5,7 +5,7 @@ from .channels.base import Channel, Giveaway
 from .channels import PUSH_CHANNELS, PULL_CHANNELS
 from . import state
 
-log = logging.getLogger("free_checker")
+log = logging.getLogger("lootscout")
 
 
 def run_pipeline(current: list[Giveaway], channels: list[Channel], seen_path: Path) -> None:

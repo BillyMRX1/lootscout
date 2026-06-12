@@ -1,6 +1,6 @@
 import pytest
-from free_checker import config
-from free_checker.channels import build_channels
+from lootscout import config
+from lootscout.channels import build_channels
 
 BASE = """
 platforms = ["pc"]

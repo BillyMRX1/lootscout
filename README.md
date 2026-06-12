@@ -1,4 +1,4 @@
-# free-checker
+# 🔭 LootScout
 
 Notify yourself when a game is **free to keep** — across Steam, Epic, GOG, Xbox,
 and Switch. It polls the [GamerPower](https://www.gamerpower.com/) giveaway API,
@@ -28,7 +28,7 @@ Run the interactive setup wizard. It writes `config.toml` and a `.env`
 (secrets file, `chmod 600`):
 
 ```bash
-uv run free-checker setup
+uv run lootscout setup
 ```
 
 ## Running
@@ -36,7 +36,7 @@ uv run free-checker setup
 Check for new giveaways (this is the default command — `run` is optional):
 
 ```bash
-uv run free-checker
+uv run lootscout
 ```
 
 ### Scheduling with cron
@@ -44,7 +44,7 @@ uv run free-checker
 Poll every 6 hours:
 
 ```cron
-0 */6 * * * cd /path/to/free-games && /path/to/uv run free-checker >> /var/log/free-checker.log 2>&1
+0 */6 * * * cd /path/to/lootscout && /path/to/uv run lootscout >> /var/log/lootscout.log 2>&1
 ```
 
 Use absolute paths for both the project directory and `uv`; cron runs with a
@@ -57,7 +57,7 @@ web server at the `public/` directory (or just at the file):
 
 ```nginx
 location = /feed.xml {
-    alias /path/to/free-games/public/feed.xml;
+    alias /path/to/lootscout/public/feed.xml;
 }
 ```
 

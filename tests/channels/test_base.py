@@ -1,4 +1,4 @@
-from free_checker.channels.base import Giveaway
+from lootscout.channels.base import Giveaway
 
 def test_giveaway_from_api_maps_fields():
     raw = {

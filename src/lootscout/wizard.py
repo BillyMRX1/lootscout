@@ -88,7 +88,7 @@ def send_tests(channels) -> list[tuple[str, bool, str]]:
 
 
 def run_setup(config_path, env_path) -> None:
-    print("Free Game Checker — Setup\n")
+    print("LootScout — Setup\n")
 
     chosen = questionary.checkbox(
         "Which platforms to watch?",
@@ -159,6 +159,6 @@ def run_setup(config_path, env_path) -> None:
         for name, ok, err in send_tests(build_channels(cfg_obj)):
             print(f"  {'✔' if ok else '✗'} {name}" + (f" — {err}" if err else ""))
 
-    print("\nTest run: uv run free-checker")
+    print("\nTest run: uv run lootscout")
     print("Cron (every 6h):")
-    print("  0 */6 * * * cd $(pwd) && uv run free-checker >> checker.log 2>&1")
+    print("  0 */6 * * * cd $(pwd) && uv run lootscout >> lootscout.log 2>&1")

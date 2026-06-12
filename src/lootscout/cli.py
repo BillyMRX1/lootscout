@@ -38,7 +38,7 @@ def main(argv: list[str] | None = None) -> int:
         try:
             cfg = config.load(CONFIG_PATH)
         except FileNotFoundError:
-            print("No config.toml — run: uv run free-checker setup", file=sys.stderr)
+            print("No config.toml — run: uv run lootscout setup", file=sys.stderr)
             return 1
         try:
             runner.run(cfg, SEEN_PATH)
@@ -47,5 +47,5 @@ def main(argv: list[str] | None = None) -> int:
             return 1
         return 0
 
-    print(f"Unknown command: {cmd}\nUsage: free-checker [setup|run]", file=sys.stderr)
+    print(f"Unknown command: {cmd}\nUsage: lootscout [setup|run]", file=sys.stderr)
     return 2

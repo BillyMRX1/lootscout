@@ -1,7 +1,7 @@
 from pathlib import Path
 from xml.etree import ElementTree as ET
-from free_checker.channels.rss import RssChannel
-from free_checker.channels.base import Giveaway
+from lootscout.channels.rss import RssChannel
+from lootscout.channels.base import Giveaway
 
 def g(i, t): return Giveaway(i, t, "$9", "https://img", "desc", "https://u", "N/A", "PC")
 

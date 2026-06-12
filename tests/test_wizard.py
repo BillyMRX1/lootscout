@@ -1,6 +1,6 @@
 import tomllib, stat, os
 from pathlib import Path
-from free_checker import wizard
+from lootscout import wizard
 
 def test_write_config_produces_loadable_toml(tmp_path):
     cfg = {
@@ -29,7 +29,7 @@ def test_random_topic_is_obscure():
     assert len(t) > len("free-games-") + 6
 
 def test_sample_giveaway_is_a_giveaway():
-    from free_checker.channels.base import Giveaway
+    from lootscout.channels.base import Giveaway
     s = wizard.sample_giveaway()
     assert isinstance(s, Giveaway)
     assert s.title  # has a recognizable test title

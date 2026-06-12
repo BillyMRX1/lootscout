@@ -16,6 +16,6 @@ def parse(raw_list: list[dict]) -> list[Giveaway]:
 
 def fetch(platforms: list[str], gtype: str, timeout: int = 20) -> list[Giveaway]:
     url = build_url(platforms, gtype)
-    resp = requests.get(url, timeout=timeout, headers={"User-Agent": "free-checker/0.1"})
+    resp = requests.get(url, timeout=timeout, headers={"User-Agent": "lootscout/0.1"})
     resp.raise_for_status()
     return parse(resp.json())

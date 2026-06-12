@@ -1,6 +1,6 @@
 import os
 import pytest
-from free_checker import config
+from lootscout import config
 
 TOML = """
 platforms = ["pc", "switch"]
