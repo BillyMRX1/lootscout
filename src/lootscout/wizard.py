@@ -16,6 +16,17 @@ _q_common.INDICATOR_SELECTED = "■"
 _q_common.INDICATOR_UNSELECTED = "□"
 POINTER = "◆"
 
+# Default questionary leaves "selected"/"highlighted" empty, which renders
+# checked rows as a harsh reverse-video block in many terminals. Give checked
+# items clean green text + ■, a green pointer, and a soft cursor highlight.
+WIZARD_STYLE = questionary.Style([
+    ("qmark", "fg:#5fd700 bold"),
+    ("question", "bold"),
+    ("pointer", "fg:#5fd700 bold"),
+    ("selected", "fg:#5fd700"),          # checked item (□/■ + label)
+    ("highlighted", "fg:#5fafff bold"),  # row under the cursor
+])
+
 
 def random_topic() -> str:
     alphabet = string.ascii_lowercase + string.digits
@@ -102,6 +113,7 @@ def run_setup(config_path, env_path) -> None:
         "Which platforms to watch?",
         choices=[questionary.Choice(label, checked=True) for label in PLATFORM_CHOICES],
         pointer=POINTER,
+        style=WIZARD_STYLE,
     ).ask()
     platforms = [slug for label in chosen for slug in PLATFORM_CHOICES[label]]
 
@@ -115,6 +127,7 @@ def run_setup(config_path, env_path) -> None:
             questionary.Choice("RSS — for feed readers", value="rss", checked=True),
         ],
         pointer=POINTER,
+        style=WIZARD_STYLE,
     ).ask()
 
     cfg = {"platforms": platforms, "type": "game", "enabled": channels}
