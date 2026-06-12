@@ -7,7 +7,6 @@ dependencies = [
     "requests>=2.31",
     "questionary>=2.0",
     "tomli-w>=1.0",
-    "qrcode>=7.4",
 ]
 
 [project.scripts]

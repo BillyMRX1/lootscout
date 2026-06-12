@@ -5,11 +5,10 @@ from lootscout import config
 TOML = """
 platforms = ["pc", "switch"]
 type = "game"
-enabled = ["ntfy", "email"]
+enabled = ["telegram", "email"]
 
-[ntfy]
-topic = "free-games-abc"
-server = "https://ntfy.sh"
+[telegram]
+chat_id = "987654"
 """
 
 def write(tmp_path, text=TOML):
@@ -19,8 +18,8 @@ def test_load_parses_platforms_and_enabled(tmp_path):
     cfg = config.load(write(tmp_path), env={})
     assert cfg.platforms == ["pc", "switch"]
     assert cfg.type == "game"
-    assert cfg.enabled == ["ntfy", "email"]
-    assert cfg.section("ntfy")["topic"] == "free-games-abc"
+    assert cfg.enabled == ["telegram", "email"]
+    assert cfg.section("telegram")["chat_id"] == "987654"
 
 def test_enabled_channel_missing_secret_fails_fast(tmp_path):
     # email enabled but GMAIL_USER absent in env
@@ -33,6 +32,6 @@ def test_require_secret_returns_value_when_present(tmp_path):
     assert cfg.require_secret("GMAIL_USER") == "a@b.com"
 
 def test_unknown_enabled_channel_rejected(tmp_path):
-    bad = TOML.replace('["ntfy", "email"]', '["bogus"]')
+    bad = TOML.replace('["telegram", "email"]', '["bogus"]')
     with pytest.raises(config.ConfigError):
         config.load(write(tmp_path, bad), env={})

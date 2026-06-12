@@ -4,7 +4,8 @@ docs/
 
 # Secrets & state
 .env
-config.toml        # holds ntfy topic + telegram chat_id (obscurity); use config.example.toml
+# config.toml holds your telegram chat_id etc. — keep it local; use config.example.toml
+config.toml
 seen.json
 
 # RSS output (regenerated every run)

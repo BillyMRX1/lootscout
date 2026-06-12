@@ -4,7 +4,7 @@ import tomllib
 from dataclasses import dataclass
 from pathlib import Path
 
-VALID_CHANNELS = {"email", "ntfy", "telegram", "rss"}
+VALID_CHANNELS = {"email", "telegram", "rss"}
 
 
 class ConfigError(Exception):

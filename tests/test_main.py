@@ -5,7 +5,7 @@ from lootscout.channels.base import Giveaway
 def g(i): return Giveaway(i, f"G{i}", "$9", "", "d", "u", "N/A", "PC")
 
 class FakePush:
-    name = "ntfy"
+    name = "telegram"
     def __init__(self, fail=False): self.fail = fail; self.notified = None
     def notify_new(self, games):
         if self.fail: raise RuntimeError("boom")

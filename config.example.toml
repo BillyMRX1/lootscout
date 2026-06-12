@@ -1,10 +1,6 @@
 platforms = ["pc", "xbox-one", "xbox-series-xs", "switch"]
 type = "game"
-enabled = ["ntfy", "rss"]
-
-[ntfy]
-topic = "free-games-CHANGEME"
-server = "https://ntfy.sh"
+enabled = ["telegram", "rss"]
 
 [telegram]
 chat_id = ""

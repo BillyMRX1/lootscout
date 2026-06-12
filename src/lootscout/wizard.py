@@ -1,13 +1,10 @@
 from __future__ import annotations
 import os
-import secrets
-import string
 from pathlib import Path
 import tomli_w
 import requests
 import questionary
 import questionary.prompts.common as _q_common
-import qrcode
 
 # questionary hardcodes round ● / ○ checkbox glyphs as module globals (no
 # per-call override exists in 2.x). Reassign them to square boxes for a cleaner
@@ -27,12 +24,6 @@ WIZARD_STYLE = questionary.Style([
     ("selected", "noreverse"),     # checked label: plain text, no highlight block
     ("highlighted", "noreverse"),  # cursor row: plain text, no highlight block
 ])
-
-
-def random_topic() -> str:
-    alphabet = string.ascii_lowercase + string.digits
-    suffix = "".join(secrets.choice(alphabet) for _ in range(8))
-    return f"free-games-{suffix}"
 
 
 def write_config(path: Path, cfg: dict) -> None:
@@ -56,13 +47,6 @@ def detect_chat_id(token: str) -> str | None:
         if msg and "chat" in msg:
             return str(msg["chat"]["id"])
     return None
-
-
-def print_qr(text: str) -> None:
-    qr = qrcode.QRCode(border=1)
-    qr.add_data(text)
-    qr.make()
-    qr.print_ascii(invert=True)
 
 
 PLATFORM_CHOICES = {
@@ -121,9 +105,8 @@ def run_setup(config_path, env_path) -> None:
     channels = questionary.checkbox(
         "Pick notification channels:",
         choices=[
-            questionary.Choice("ntfy.sh — phone/desktop push, no account (easiest)",
-                               value="ntfy", checked=True),
-            questionary.Choice("Telegram — bot DM", value="telegram"),
+            questionary.Choice("Telegram — private bot DM (recommended)",
+                               value="telegram", checked=True),
             questionary.Choice("Email — Gmail", value="email"),
             questionary.Choice("RSS — for feed readers", value="rss", checked=True),
         ],
@@ -133,18 +116,7 @@ def run_setup(config_path, env_path) -> None:
 
     cfg = {"platforms": platforms, "type": "game", "enabled": channels}
     env: dict[str, str] = {"GMAIL_USER": "", "GMAIL_APP_PASSWORD": "",
-                           "RECIPIENT_EMAIL": "", "TELEGRAM_BOT_TOKEN": "", "NTFY_TOKEN": ""}
-
-    if "ntfy" in channels:
-        default_topic = random_topic()
-        topic = questionary.text("ntfy topic?", default=default_topic).ask()
-        server = questionary.text("ntfy server?", default="https://ntfy.sh").ask()
-        cfg["ntfy"] = {"topic": topic, "server": server}
-        sub_url = f"{server.rstrip('/')}/{topic}"
-        print(f"\nSubscribe on your phone — open {sub_url} or scan:")
-        print_qr(sub_url)
-        token = questionary.password("ntfy auth token? (blank if public)").ask()
-        env["NTFY_TOKEN"] = token or ""
+                           "RECIPIENT_EMAIL": "", "TELEGRAM_BOT_TOKEN": ""}
 
     if "telegram" in channels:
         print("\nCreate a bot via @BotFather, then paste its token.")

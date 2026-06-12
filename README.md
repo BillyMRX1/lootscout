@@ -3,7 +3,7 @@
 Notify yourself when a game is **free to keep** — across Steam, Epic, GOG, Xbox,
 and Switch. It polls the [GamerPower](https://www.gamerpower.com/) giveaway API,
 remembers what it has already seen, and pushes only **new** giveaways to the
-channels you enable (ntfy, Telegram, email) while always writing a full RSS feed.
+channels you enable (Telegram, email) while always writing a full RSS feed.
 
 ## How it works
 
@@ -70,7 +70,7 @@ carry the right `<link>`.
   [app password](https://support.google.com/accounts/answer/185833), not your
   primary password. App passwords are scoped to a single app and can be revoked
   independently. Secrets live in `.env`, which is `chmod 600` and gitignored.
-- **ntfy:** the topic name *is* the access control. Pick an obscure,
-  hard-to-guess topic (the wizard generates a random one) — anyone who knows the
-  topic can read your notifications.
-- `.env`, `seen.json`, and `public/feed.xml` are gitignored. Never commit them.
+- **Telegram:** the bot token is a secret (revocable via @BotFather). Messages
+  go only to your detected `chat_id`, so notifications stay private to you.
+- `.env`, `config.toml`, `seen.json`, and `public/feed.xml` are gitignored.
+  Never commit them.
