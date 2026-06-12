@@ -11,20 +11,25 @@ class NtfyChannel:
         self.server = server.rstrip("/")
         self.token = token
 
-    def _headers(self, title: str, click: str) -> dict:
-        h = {"Title": title, "Tags": "video_game", "Click": click}
+    def _headers(self) -> dict:
+        # Only ASCII-safe values belong in HTTP headers (latin-1 encoded by
+        # urllib3). Unicode title/message go in the JSON body instead.
+        h = {}
         if self.token:
             h["Authorization"] = f"Bearer {self.token}"
         return h
 
     def notify_new(self, games: list[Giveaway]) -> None:
-        url = f"{self.server}/{self.topic}"
         for game in games:
-            body = f"{game.title} — {game.worth}\n{game.platforms}"
+            payload = {
+                "topic": self.topic,
+                "title": f"🎮 Free: {game.title}",
+                "message": f"{game.worth} — {game.platforms}",
+                "click": game.url,
+                "tags": ["video_game"],
+            }
             resp = requests.post(
-                url, data=body.encode("utf-8"),
-                headers=self._headers(f"🎮 Free: {game.title}", game.url),
-                timeout=20,
+                self.server, json=payload, headers=self._headers(), timeout=20
             )
             resp.raise_for_status()
 

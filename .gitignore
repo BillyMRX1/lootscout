@@ -4,6 +4,7 @@ docs/
 
 # Secrets & state
 .env
+config.toml        # holds ntfy topic + telegram chat_id (obscurity); use config.example.toml
 seen.json
 
 # RSS output (regenerated every run)
