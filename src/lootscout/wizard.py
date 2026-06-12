@@ -91,6 +91,44 @@ def send_tests(channels) -> list[tuple[str, bool, str]]:
     return results
 
 
+CRON_MARKER = "lootscout"
+
+
+def cron_line(project_dir: Path, uv_path: str) -> str:
+    """The exact crontab line to run LootScout every 6h, with absolute paths."""
+    return (f"0 */6 * * * cd {project_dir} && {uv_path} run lootscout "
+            f">> {project_dir}/lootscout.log 2>&1")
+
+
+def install_cron(crontab_text: str, line: str) -> str:
+    """Return crontab text with the LootScout schedule installed (idempotent).
+
+    Any pre-existing lootscout line is dropped first, so re-running setup
+    refreshes a stale schedule rather than stacking duplicates.
+    """
+    kept = [ln for ln in crontab_text.splitlines() if CRON_MARKER not in ln]
+    kept.append(line)
+    return "\n".join(kept) + "\n"
+
+
+def cron_notice(crontab_text: str, project_dir: Path, uv_path: str) -> str:
+    """Return a message about the cron schedule state.
+
+    setup does NOT install cron itself, so this tells the user plainly whether a
+    job exists and, if not, exactly how to add one.
+    """
+    if CRON_MARKER in crontab_text:
+        return "✓ A LootScout cron job is already scheduled — automatic checks are on."
+    line = cron_line(project_dir, uv_path)
+    return (
+        "⚠️  No cron job is installed — LootScout will NOT run automatically.\n"
+        "    `setup` does not install cron for you. To schedule it (every 6h),\n"
+        "    run `crontab -e` and add this line:\n\n"
+        f"    {line}\n\n"
+        "    Then verify with: uv run lootscout status"
+    )
+
+
 def run_setup(config_path, env_path) -> None:
     print("LootScout — Setup\n")
 
@@ -155,6 +193,25 @@ def run_setup(config_path, env_path) -> None:
         for name, ok, err in send_tests(build_channels(cfg_obj)):
             print(f"  {'✔' if ok else '✗'} {name}" + (f" — {err}" if err else ""))
 
-    print("\nTest run: uv run lootscout")
-    print("Cron (every 6h):")
-    print("  0 */6 * * * cd $(pwd) && uv run lootscout >> lootscout.log 2>&1")
+    print("\nTest run: uv run lootscout\n")
+    import shutil
+    from . import remove
+    uv_path = shutil.which("uv") or "uv"
+    project_dir = Path.cwd()
+    line = cron_line(project_dir, uv_path)
+    existing = remove.read_crontab()
+
+    if CRON_MARKER in existing:
+        print(cron_notice(existing, project_dir, uv_path))   # already scheduled ✓
+    elif questionary.confirm(
+        "Install the cron job now? (automatic check every 6h)", default=True
+    ).ask():
+        try:
+            remove.write_crontab(install_cron(existing, line))
+            print(f"✓ Installed cron job (every 6h):\n    {line}")
+            print("  Verify with: uv run lootscout status")
+        except Exception as exc:
+            print(f"✗ Could not install cron automatically ({exc}).")
+            print(cron_notice(existing, project_dir, uv_path))
+    else:
+        print(cron_notice(existing, project_dir, uv_path))   # manual ⚠️ instructions

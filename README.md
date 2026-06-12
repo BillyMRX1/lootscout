@@ -76,14 +76,17 @@ uv run lootscout remove
 
 ### Scheduling with cron (server / always-on PC)
 
-Poll every 6 hours:
+At the end of `setup`, LootScout **offers to install the cron job for you**
+(every 6 hours, with absolute paths) — just answer yes. If you decline (or want
+to do it by hand), it prints the exact line to add via `crontab -e`:
 
 ```cron
-0 */6 * * * cd /path/to/lootscout && /path/to/uv run lootscout >> /var/log/lootscout.log 2>&1
+0 */6 * * * cd /path/to/lootscout && /path/to/uv run lootscout >> /path/to/lootscout/lootscout.log 2>&1
 ```
 
 Use absolute paths for both the project directory and `uv`; cron runs with a
-minimal environment.
+minimal environment. Re-running `setup` refreshes an existing schedule rather
+than duplicating it. Verify any time with `uv run lootscout status`.
 
 On a **macOS laptop**, prefer `launchd` over cron — it runs a missed job when
 the machine wakes, whereas cron simply skips jobs that fall during sleep.
