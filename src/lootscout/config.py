@@ -14,7 +14,7 @@ class ConfigError(Exception):
 @dataclass
 class Config:
     platforms: list[str]
-    type: str
+    types: list[str]
     enabled: list[str]
     data: dict
     env: dict
@@ -38,8 +38,18 @@ def load(config_path: Path, env: dict | None = None) -> Config:
         raise ConfigError(f"Unknown channel(s) in 'enabled': {sorted(unknown)}")
     return Config(
         platforms=raw.get("platforms", ["pc"]),
-        type=raw.get("type", "game"),
+        types=_load_types(raw),
         enabled=enabled,
         data=raw,
         env=env,
     )
+
+
+def _load_types(raw: dict) -> list[str]:
+    """Read giveaway types as a list, accepting the legacy single `type` string
+    (which may itself be period-joined, e.g. "game.loot")."""
+    types = raw.get("types")
+    if types:
+        return list(types)
+    legacy = raw.get("type", "game")
+    return legacy.split(".") if isinstance(legacy, str) else ["game"]

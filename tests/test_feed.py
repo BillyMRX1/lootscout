@@ -16,15 +16,19 @@ def test_parse_handles_na_end_date():
     games = feed.parse(SAMPLE)
     assert games[1].end_date == "N/A"
 
-def test_build_url_includes_all_platforms_and_type():
-    url = feed.build_url(["pc", "xbox-one", "switch"], "game")
+def test_build_url_includes_all_platforms_and_types():
+    url = feed.build_url(["pc", "xbox-one", "switch"], ["game"])
     assert "platform=pc.xbox-one.switch" in url
     assert "type=game" in url
+
+def test_build_url_joins_multiple_types():
+    url = feed.build_url(["pc"], ["game", "loot", "beta"])
+    assert "type=game.loot.beta" in url
 
 @patch("lootscout.feed.requests.get")
 def test_fetch_calls_api_and_parses(mock_get):
     resp = MagicMock(); resp.json.return_value = SAMPLE; resp.raise_for_status = MagicMock()
     mock_get.return_value = resp
-    games = feed.fetch(["pc"], "game")
+    games = feed.fetch(["pc"], ["game"])
     assert len(games) == 2
     mock_get.assert_called_once()

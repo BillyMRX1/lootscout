@@ -74,5 +74,5 @@ def run(cfg, seen_path: Path) -> None:
     from .channels import build_channels
     from . import feed
     channels = build_channels(cfg)
-    current = feed.fetch(cfg.platforms, cfg.type)
+    current = feed.fetch(cfg.platforms, cfg.types)
     run_pipeline(current, channels, seen_path)

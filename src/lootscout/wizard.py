@@ -49,11 +49,44 @@ def detect_chat_id(token: str) -> str | None:
     return None
 
 
-PLATFORM_CHOICES = {
+# Grouped so the wizard isn't 18 redundant rows. `pc` is GamerPower's umbrella —
+# it already covers Steam/Epic/GOG/itch/DRM-free — so individual PC stores aren't
+# listed separately.
+PLATFORM_GROUPS = {
     "PC (Steam/Epic/GOG/itch/…)": ["pc"],
+    "PlayStation": ["ps4", "ps5"],
     "Xbox": ["xbox-one", "xbox-series-xs"],
-    "Switch": ["switch"],
+    "Nintendo Switch": ["switch"],
+    "Android": ["android"],
+    "iOS": ["ios"],
+    "VR": ["vr"],
 }
+ALL_PLATFORMS = "🌐 All platforms"
+
+# GamerPower's `type` filter values, with friendly labels.
+TYPE_GROUPS = {
+    "Free games": "game",
+    "Free loot": "loot",
+    "Beta access": "beta",
+}
+ALL_TYPES = "🌐 All types"
+
+
+def _dedupe(items: list[str]) -> list[str]:
+    seen: set[str] = set()
+    return [x for x in items if not (x in seen or seen.add(x))]
+
+
+def resolve_platforms(selected: list[str]) -> list[str]:
+    """Map chosen platform labels (incl. the All sentinel) to API slugs."""
+    labels = PLATFORM_GROUPS.keys() if ALL_PLATFORMS in selected else selected
+    return _dedupe([slug for label in labels for slug in PLATFORM_GROUPS.get(label, [])])
+
+
+def resolve_types(selected: list[str]) -> list[str]:
+    """Map chosen giveaway-type labels (incl. the All sentinel) to API values."""
+    labels = TYPE_GROUPS.keys() if ALL_TYPES in selected else selected
+    return _dedupe([TYPE_GROUPS[label] for label in labels if label in TYPE_GROUPS])
 
 
 def sample_giveaway():
@@ -133,12 +166,28 @@ def run_setup(config_path, env_path) -> None:
     print("LootScout — Setup\n")
 
     chosen = questionary.checkbox(
-        "Which platforms to watch?",
-        choices=[questionary.Choice(label, checked=True) for label in PLATFORM_CHOICES],
+        "Which platforms to watch? (or pick 'All')",
+        choices=[
+            questionary.Choice(ALL_PLATFORMS),
+            *[questionary.Choice(label, checked=(label == "PC (Steam/Epic/GOG/itch/…)"))
+              for label in PLATFORM_GROUPS],
+        ],
         pointer=POINTER,
         style=WIZARD_STYLE,
     ).ask()
-    platforms = [slug for label in chosen for slug in PLATFORM_CHOICES[label]]
+    platforms = resolve_platforms(chosen or [])
+
+    chosen_types = questionary.checkbox(
+        "Which kinds of giveaway? (or pick 'All')",
+        choices=[
+            questionary.Choice(ALL_TYPES),
+            *[questionary.Choice(label, checked=(label == "Free games"))
+              for label in TYPE_GROUPS],
+        ],
+        pointer=POINTER,
+        style=WIZARD_STYLE,
+    ).ask()
+    types = resolve_types(chosen_types or []) or ["game"]
 
     channels = questionary.checkbox(
         "Pick notification channels:",
@@ -152,7 +201,7 @@ def run_setup(config_path, env_path) -> None:
         style=WIZARD_STYLE,
     ).ask()
 
-    cfg = {"platforms": platforms, "type": "game", "enabled": channels}
+    cfg = {"platforms": platforms, "types": types, "enabled": channels}
     env: dict[str, str] = {"GMAIL_USER": "", "GMAIL_APP_PASSWORD": "",
                            "RECIPIENT_EMAIL": "", "TELEGRAM_BOT_TOKEN": ""}
 

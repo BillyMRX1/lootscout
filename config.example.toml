@@ -1,5 +1,10 @@
-platforms = ["pc", "xbox-one", "xbox-series-xs", "switch"]
-type = "game"
+# Platforms to watch. `pc` is an umbrella (Steam/Epic/GOG/itch/DRM-free).
+# Others: ps4, ps5, xbox-one, xbox-series-xs, xbox-360, switch, android, ios, vr
+platforms = ["pc", "ps4", "ps5", "xbox-one", "xbox-series-xs", "switch"]
+
+# Giveaway kinds: "game" (free to keep), "loot" (DLC/in-game items), "beta" (early access)
+types = ["game"]
+
 enabled = ["telegram", "rss"]
 
 [telegram]

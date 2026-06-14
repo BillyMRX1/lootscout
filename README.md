@@ -1,9 +1,14 @@
 # 🔭 LootScout
 
-Notify yourself when a game is **free to keep** — across Steam, Epic, GOG, Xbox,
-and Switch. It polls the [GamerPower](https://www.gamerpower.com/) giveaway API,
-remembers what it has already seen, and pushes only **new** giveaways to the
-channels you enable (Telegram, email) while always writing a full RSS feed.
+Notify yourself when a game is **free to keep** — across PC (Steam/Epic/GOG/itch),
+PlayStation, Xbox, Switch, mobile, and VR. It polls the
+[GamerPower](https://www.gamerpower.com/) giveaway API, remembers what it has
+already seen, and pushes only **new** giveaways to the channels you enable
+(Telegram, email) while always writing a full RSS feed.
+
+You choose **which platforms** and **which kinds** of giveaway to watch — full
+games (`game`), in-game loot/DLC (`loot`), or beta/early-access (`beta`) — via
+checkboxes in `setup` (each with an "All" shortcut).
 
 ## How it works
 

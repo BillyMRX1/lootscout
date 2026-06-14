@@ -17,9 +17,24 @@ def write(tmp_path, text=TOML):
 def test_load_parses_platforms_and_enabled(tmp_path):
     cfg = config.load(write(tmp_path), env={})
     assert cfg.platforms == ["pc", "switch"]
-    assert cfg.type == "game"
+    assert cfg.types == ["game"]            # back-compat: old `type` string → list
     assert cfg.enabled == ["telegram", "email"]
     assert cfg.section("telegram")["chat_id"] == "987654"
+
+def test_load_reads_types_list(tmp_path):
+    toml = TOML.replace('type = "game"', 'types = ["game", "loot", "beta"]')
+    cfg = config.load(write(tmp_path, toml), env={})
+    assert cfg.types == ["game", "loot", "beta"]
+
+def test_load_back_compat_period_joined_type(tmp_path):
+    toml = TOML.replace('type = "game"', 'type = "game.loot"')
+    cfg = config.load(write(tmp_path, toml), env={})
+    assert cfg.types == ["game", "loot"]
+
+def test_load_defaults_types_to_game(tmp_path):
+    toml = TOML.replace('type = "game"', '')
+    cfg = config.load(write(tmp_path, toml), env={})
+    assert cfg.types == ["game"]
 
 def test_enabled_channel_missing_secret_fails_fast(tmp_path):
     # email enabled but GMAIL_USER absent in env

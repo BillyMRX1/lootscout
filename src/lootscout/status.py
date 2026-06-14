@@ -46,7 +46,7 @@ def run_status(config_path: Path, env_path: Path, seen_path: Path,
 
     print(f"Config ({config_path.name})          ✓ found")
     print(f"  Platforms                   {', '.join(cfg.platforms)}")
-    print(f"  Giveaway type               {cfg.type}")
+    print(f"  Giveaway types              {', '.join(cfg.types)}")
     print(f"  Enabled channels            {', '.join(cfg.enabled) or '(none)'}")
 
     # --- Secrets / health ---
